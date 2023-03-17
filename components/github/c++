@@ -1,0 +1,220 @@
+#include<iostream>
+using namespace std;
+class node
+{
+    public:
+      int value;
+      node *prev;
+      node *next;
+    node()
+    {
+        value=0;
+        prev=NULL;
+        next=NULL;
+    }
+    
+};
+class dubly_circular
+{
+    private:
+      node *head;
+      int count;
+    public:
+       dubly_circular()
+       {
+           head=NULL;
+           count =0;
+       }
+       void insert_begin(int value)
+       {
+           node *temp=new node();
+           temp->value=value;
+           if(head==NULL)
+           {
+               head=temp;
+               temp->prev=temp;
+               temp->next=temp;
+               ++count;
+           }
+           else
+           {
+              /* temp->next=head;
+               temp->prev=head->prev;
+               head->prev=temp;
+               head=temp;
+               head->prev->next=temp;
+               ++count;*/           // both code are valid
+               temp->next=head;
+               temp->prev=head->prev;
+               temp->next->prev=temp;
+               temp->prev->next=temp;
+               head=temp;
+               count++;
+           }
+       }
+
+       void insert_end(int value)
+       {
+            node *temp=new node();
+            temp->value=value;
+             if(head==NULL)
+             {
+                head=temp;
+                temp->next=temp;
+                temp->prev=temp;
+                ++count;
+             }
+             else
+             {
+                node *t=head;
+                while(t->next!=head)
+                {
+                     t=t->next;
+                }
+                temp->prev=t;
+                temp->next=t->next;
+                t->next=temp;
+                temp->next->prev=temp;
+                ++count;
+             }
+       }
+       void insert_at_middle(int index,int value)
+       {
+           node *temp=new node();
+           temp->value=value;
+           if(head==NULL)
+           {
+               cout<<"POSITION DOESNT EXISTS"<<endl;
+           }
+           else
+           {
+                  if(index>count)
+                  {
+                      cout<<"POSITION DOESNT EXIXTS"<<endl;
+                  }
+                  else
+                  {
+                    node *t=head;
+                    while(index>1)
+                    {
+                        index--;
+                        t=t->next;
+                    }
+                    if(t->next==head)
+                    {
+                        insert_end(value);
+                    }
+                    else
+                    {
+                          temp->next=t->next;
+                          temp->prev=t;
+                          t->next->prev=temp;
+                          t->next=temp;
+                          count++;
+                    }
+                  }
+           }
+       }
+        /* *************************************************
+         *deleteion program started here
+         * **************************************************** */
+
+        void delete_at_begin()
+        {
+            if(head==NULL)
+            {
+                cout<<"CANNOT DELETE"<<endl;
+            }
+            else
+            {
+                node *t=head;
+                head=t->next;
+                head->prev=t->prev;
+                t->prev->next=head;
+                count--;            // count readuce by 1
+                delete t;          // memory free by deleting t
+            }
+        }
+        void delete_at_end()
+        {
+            if(head==NULL)
+            {
+                cout<<"POSITION DOESNT EXISTS"<<endl;
+            }
+            else
+            {
+                node *t=head->prev;
+                t->prev->next=head;
+                t->next->prev=t->prev;
+                count--;
+                delete t;
+            }
+        }
+        void delete_at_middle(int index)
+        {
+            if(head==NULL)
+            {
+                cout<<"POSITION DOESNT EXISTS"<<endl;
+
+            }
+            else if(index==1)
+            {
+                delete_at_begin();
+            }
+            else
+            {
+                if(index>count)
+                {
+                    cout<<"POSITION DOESNT EXISTS"<<endl;
+                }
+                else
+                {
+                    node *t=head;
+                    while(index>1)
+                    {
+                        index--;
+                        t=t->next;
+                    }
+                    if(t->next==head)
+                    {
+                        delete_at_end();
+                    }
+                    else
+                    {
+                        t->prev->next=t->next;
+                        t->next->prev=t->prev;
+                        count--;
+                        delete t;
+                    }
+
+                }
+            }
+        }
+       void print()
+       {
+           node *t=head;
+           int n=count;
+           while(n!=0)
+           {
+               n--;
+               cout<<t->value<<"=>";
+               t=t->next;
+           }
+           cout<<endl<<"count =>"<<count<<endl;
+           
+       }
+};
+int main()
+{
+    dubly_circular l1;
+    l1.insert_begin(4);
+    l1.insert_begin(43);
+    l1.insert_begin(24);
+    l1.insert_begin(40);
+    l1.insert_end(787);
+    l1.insert_at_middle(1,66);
+    l1.delete_at_begin();
+    l1.delete_at_end();
+    l1.delete_at_middle(4);
+    l1.print();
+}
